@@ -1,5 +1,5 @@
 # Gesture Volume Control
-Use hand gesture to control system volume. Based on the distance between your thumb and index finger, you can simply control your system's volume.
+Use hand gestures to control system volume. Based on the distance between your thumb and index finger, you can simply control your system's volume.
 
 ## Usage
 First, install the requirements:
