@@ -1,7 +1,7 @@
-## Gesture Volume Control
+# Gesture Volume Control
 Use hand gesture to control system volume. Based on the distance between your thumb and index finger, you can simply control your system's volume.
 
-# Usage
+## Usage
 First, install the requirements:
 ```
 pip install -r requirements.txt
