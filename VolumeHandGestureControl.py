@@ -3,16 +3,16 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from math import hypot
 from numpy import interp
+import HandTrackingModule as htm
 import cv2
 import time
-import HandTrackingModule as htm
 
 ### Initializing webCam object
 cap = cv2.VideoCapture(0)
 
-### Instantiating from handDetector class with some detection confidence (detectionCon)
+### Instantiating from handDetector class with some detection confidence (detection_con)
 ### Change detectionCon to change model's strictness of hand detection
-detector = htm.handDetector(detectionCon=0.8)
+detector = htm.HandDetector(detection_con=0.8)
 
 ### Identifying audio interface
 devices = AudioUtilities.GetSpeakers()
@@ -21,27 +21,25 @@ interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
 ### Finding volume range
 volume = cast(interface, POINTER(IAudioEndpointVolume))
 volRange = volume.GetVolumeRange()
-minVol = volRange[0]
-maxVol = volRange[1]
+min_vol = volRange[0]
+max_vol = volRange[1]
 
 ### Initializing some variables
-volBar = 400
-volPer = 0
-pTime = 0
+vol_bar = 400
+vol_per = 0
+p_time = 0
 
 while True:
     ### Reading from the webCam object
     success, img = cap.read()
 
     ### Detecting landmarks of hand
-    img = detector.findHands(img)
+    img = detector.find_hands(img)
 
     ### Getting coordinates of the landmarks
-    lmList = detector.findPosition(img, draw=False)
+    lmList = detector.find_position(img, draw=False)
 
     if len(lmList) != 0:
-        # print(lmList[4], lmList[8])
-
         ### Extracting coordinates of the thumb, the index finger, and the middle point
         x1, y1 = lmList[4][1], lmList[4][2]
         x2, y2 = lmList[8][1], lmList[8][2]
@@ -55,17 +53,15 @@ while True:
 
         ### Finding the length of this line
         length = hypot(x2 - x1, y2 - y1)
-        # print(length)
 
-        ### Mapping the length of this line onto the volume range,
-        ### onto the location of volume bar, and onto volume percentage
+        ### Mapping the length of this line onto the volume range, getting volume scalar level,
+        ### mapping volume scalar level onto the location of volume bar
         ### 20 is the length of the connecting line, when the thumb and the index finger are close to each other
         ### 180 is the length of the connecting line, when the thumb and the index finger are apart from each other
-        ### 20 and 180 vary with respect to the distance of hand from the webCam
-        vol = interp(length, [20, 180], [minVol, maxVol])
-        volBar = interp(length, [20, 180], [400, 150])
-        volPer = interp(length, [20, 180], [0, 100])
-        # print(int(length), vol)
+        ### 20 and 180 vary based on the distance of hand from the webCam
+        vol = interp(length, [20, 180], [min_vol, max_vol])
+        vol_per = int(100 * volume.GetMasterVolumeLevelScalar())
+        vol_bar = interp(vol_per, [0, 100], [400, 150])
 
         ### Setting the mapped volume to the system volume level
         volume.SetMasterVolumeLevel(vol, None)
@@ -76,13 +72,13 @@ while True:
 
     ### Drawing volume bar, writing volume percentage
     cv2.rectangle(img, (50, 150), (85, 400), (255, 0, 0), 3)
-    cv2.rectangle(img, (50, int(volBar)), (85, 400), (255, 0, 0), cv2.FILLED)
-    cv2.putText(img, f'{int(volPer)} %', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2)
+    cv2.rectangle(img, (50, int(vol_bar)), (85, 400), (255, 0, 0), cv2.FILLED)
+    cv2.putText(img, f'{vol_per} %', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2)
 
     ### Computing and writing frame-per-second
-    cTime = time.time()
-    fps = 1 / (cTime - pTime)
-    pTime = cTime
+    c_time = time.time()
+    fps = 1 / (c_time - p_time)
+    p_time = c_time
     cv2.putText(img, f'FPS: {int(fps)}', (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2)
 
     ### Showing the window
