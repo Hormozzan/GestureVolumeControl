@@ -86,5 +86,5 @@ while True:
     cv2.putText(img, f'FPS: {int(fps)}', (20, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 2)
 
     ### Showing the window
-    cv2.imshow("Image", img)
+    cv2.imshow("Gesture Volume Control", img)
     cv2.waitKey(1)
