@@ -10,5 +10,8 @@ Then, use `VolumeHandGesture.py` to lower and raise the volume:
 ```
 python VolumeHandGesture.py
 ```
-
+Alternatively, you can use `GVC.py` to run the script in background. It does not output the webCam image:
+```
+python GVC.py
+``` 
 With special thanks to [Murtaza Hassan](https://github.com/murtazahassan).
