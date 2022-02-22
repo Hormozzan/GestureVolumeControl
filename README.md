@@ -1,7 +1,10 @@
 # Gesture Volume Control
 Use hand gestures to control the system volume. Based on the distance between your thumb and index finger, you can simply control your system's volume.
 
-![alt text](https://github.com/Hormozzan/GestureVolumeControl/blob/main/gesture.gif)
+#![alt text](https://github.com/Hormozzan/GestureVolumeControl/blob/main/gesture.gif)
+<p align="center">
+  <img src="https://github.com/Hormozzan/GestureVolumeControl/blob/main/gesture.gif" alt="animated" />
+</p>
 
 ## Usage
 First, install the requirements:
